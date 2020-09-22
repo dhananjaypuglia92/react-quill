@@ -6,10 +6,10 @@ https://github.com/zenoamaro/react-quill
 import React from 'react';
 import ReactDOM from 'react-dom';
 import isEqual from 'lodash/isEqual';
+import Delta from 'quill-delta';
 
 import Quill, {
   QuillOptionsStatic,
-  DeltaStatic,
   RangeStatic,
   BoundsStatic,
   StringMap,
@@ -19,7 +19,7 @@ import Quill, {
 // Merged namespace hack to export types along with default object
 // See: https://github.com/Microsoft/TypeScript/issues/2719
 namespace ReactQuill {
-  export type Value = string | DeltaStatic;
+  export type Value = string | Delta;
   export type Range = RangeStatic | null;
 
   export interface QuillOptions extends QuillOptionsStatic {
@@ -36,7 +36,7 @@ namespace ReactQuill {
     modules?: StringMap,
     onChange?(
       value: string,
-      delta: DeltaStatic,
+      delta: Delta,
       source: Sources,
       editor: UnprivilegedEditor,
     ): void,
@@ -74,7 +74,7 @@ namespace ReactQuill {
     getHTML(): string;
     getBounds(index: number, length?: number): BoundsStatic;
     getSelection(focus?: boolean): RangeStatic;
-    getContents(index?: number, length?: number): DeltaStatic;
+    getContents(index?: number, length?: number): Delta;
   }
 }
 
@@ -162,13 +162,13 @@ class ReactQuill extends React.Component<ReactQuillProps, ReactQuillState> {
   /*
   Used to compare whether deltas from `onChange` are being used as `value`.
   */
-  lastDeltaChangeSet?: DeltaStatic
+  lastDeltaChangeSet?: Delta
 
   /*
   Stores the contents of the editor to be restored after regeneration.
   */
   regenerationSnapshot?: {
-    delta: DeltaStatic,
+    delta: Delta,
     selection: Range,
   }
 
@@ -488,14 +488,14 @@ class ReactQuill extends React.Component<ReactQuillProps, ReactQuillState> {
 
   onEditorChange = (
     eventName: 'text-change' | 'selection-change',
-    rangeOrDelta: Range | DeltaStatic,
-    oldRangeOrDelta: Range | DeltaStatic,
+    rangeOrDelta: Range | Delta,
+    oldRangeOrDelta: Range | Delta,
     source: Sources,
   ) => {
     if (eventName === 'text-change') {
       this.onEditorChangeText?.(
         this.editor!.root.innerHTML,
-        rangeOrDelta as DeltaStatic,
+        rangeOrDelta as Delta,
         source,
         this.unprivilegedEditor!
       );
@@ -510,7 +510,7 @@ class ReactQuill extends React.Component<ReactQuillProps, ReactQuillState> {
 
   onEditorChangeText(
     value: string,
-    delta: DeltaStatic,
+    delta: Delta,
     source: Sources,
     editor: UnprivilegedEditor,
   ): void {
