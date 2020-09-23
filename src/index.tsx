@@ -418,7 +418,7 @@ class ReactQuill extends React.Component<ReactQuillProps, ReactQuillState> {
   Returns a weaker, unprivileged proxy object that only exposes read-only
   accessors found on the editor instance, without any state-modifying methods.
   */
-  makeUnprivilegedEditor(editor: Quill) {
+  makeUnprivilegedEditor(editor: Quill): UnprivilegedEditor {
     const e = editor;
     return {
       getHTML:      () => e.root.innerHTML,
